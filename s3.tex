@@ -1,0 +1,84 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{tikz}
+\usepackage [utf8x] {inputenc}
+\usepackage [T2A] {fontenc} 
+\usepackage[russian]{babel}
+\usepackage{cmap} 
+\usepackage{ gensymb }
+% Так ссылки в PDF будут активны
+\usepackage[unicode]{hyperref}
+\usepackage{ textcomp }
+\usepackage{indentfirst}
+\usepackage[version=3]{mhchem}
+
+% вы сможете вставлять картинки командой \includegraphics[width=0.7\textwidth]{ИМЯ ФАЙЛА}
+% получается подключать, как минимум, файлы .pdf, .jpg, .png.
+\usepackage{graphicx}
+% Если вы хотите явно указать поля:
+\usepackage[margin=1in]{geometry}
+% Или если вы хотите задать поля менее явно (чем больше DIV, тем больше места под текст):
+% \usepackage[DIV=10]{typearea}
+
+\usepackage{fancyhdr}
+
+\newcommand{\bbR}{\mathbb R}%теперь вместо длинной команды \mathbb R (множество вещественных чисел) можно писать короткую запись \bbR. Вместо \bbR вы можете вписать любую строчку букв, которая начинается с '\'.
+\newcommand{\eps}{\varepsilon}
+\newcommand{\bbN}{\mathbb N}
+\newcommand{\dif}{\mathrm{d}}
+
+\newtheorem{Def}{Определение}
+\title{Климанов. Семинар 3}
+\begin{document}
+	\maketitle
+	
+	... разговоры по Ethernet
+	
+	Ethernet не гарантирует целостности и доставки данных. Ip - тоже.
+	
+	\section{Работа с оборудованием}
+	\texttt{show interface status} - показывает сведения об интерфейсах
+	
+	\texttt{show cdp neighbor} - показать подключенных соседей
+	
+	\texttt{show cdp имя устройства} - показать подробную информацию о соседе
+	
+	\texttt{show interfaces summary/brief} - информация об интерфейсах
+	
+	\texttt{show interfaces stats}  - статистика
+	
+	\texttt{show interface интерфейс} - подробная информация об интерфейсе
+	...
+	
+	\texttt{configure terminal \textit{conf t}} - переход в режим \emph{глобальной конфигурации}. Если в таком режиме набрать, например, \texttt{interface fa0/11}, мы перейдем в режим конфигурации интерфейса \emph{FastEthernet0/11}.
+	
+	Можно установить скорость командой \texttt{speed скорость}. Если просто набрать \texttt{speed}, будут выведены доступные варианты значения скорости.
+	
+	\textit{Во избежание сильной потери в скорости необходимо одинаково конфигурировать дуплекс с двух сторон}
+	
+	\texttt{dupl full} - жестко установить полный дуплекс
+	
+	\texttt{Ctrl+z} - перейти в \emph{привелегированный режим} сразу
+	
+	\texttt{show running-config | ?} - опции для парсинга файла текущей конфигурации. Например, опция \texttt{include} - только строчки, содержащие ключевое слово. Опция \texttt{interface интерфейс} - информация об "интерфейс".
+	
+	Что бы отменить команду, вводим её со словом \texttt{no} впереди. Например, \texttt{no speed}, \texttt{no duplex}
+	
+	Для того, что бы не выходить в привилегированный режим, можно использовать команду \texttt{do}. E.g. \texttt{do show interface интерфейс}.
+	
+	Настройка интервала отображения статистики: \texttt{load-interval интервал}
+	
+	\texttt{show running-config interface интерфейс} - отображает \underline{настройки интерфейса}
+	
+	\texttt{show ip interface интерфейс} и др. отображают \underline{состояние} интерфейса.
+	
+	\texttt{shutdown} - переводит в статус \emph{administratible down}
+	
+	\texttt{intrface range ?} - список доступных опций для выбора нескольких интерфейсов
+	
+	\texttt{interface range опция} - переход к конфигурированию группы интерфейсов, отвечающих "опция".
+	
+	\textit{Рекомендация: пописывать интерфейсы, можно увидеть их при помощи \texttt{show cdp neighbor} (если админ не отключил)}
+	
+	\texttt{description} - Команда установки описания.
+ \end{document}
