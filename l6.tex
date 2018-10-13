@@ -1,0 +1,99 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{tikz}
+\usepackage [utf8x] {inputenc}
+\usepackage [T2A] {fontenc} 
+\usepackage[russian]{babel}
+\usepackage{cmap} 
+\usepackage{ gensymb }
+% Так ссылки в PDF будут активны
+\usepackage[unicode]{hyperref}
+\usepackage{ textcomp }
+\usepackage{indentfirst}
+\usepackage{adjustbox}
+\usepackage[version=3]{mhchem}
+
+% вы сможете вставлять картинки командой \includegraphics[width=0.7\textwidth]{ИМЯ ФАЙЛА}
+% получается подключать, как минимум, файлы .pdf, .jpg, .png.
+\usepackage{graphicx}
+% Если вы хотите явно указать поля:
+\usepackage[margin=1in]{geometry}
+% Или если вы хотите задать поля менее явно (чем больше DIV, тем больше места под текст):
+\usepackage[DIV=20]{typearea}
+
+\usepackage{fancyhdr}
+
+\newcommand{\bbR}{\mathbb R}%теперь вместо длинной команды \mathbb R (множество вещественных чисел) можно писать короткую запись \bbR. Вместо \bbR вы можете вписать любую строчку букв, которая начинается с '\'.
+\newcommand{\eps}{\varepsilon}
+\newcommand{\bbN}{\mathbb N}
+\newcommand{\dif}{\mathrm{d}}
+
+\newtheorem{Def}{Определение}
+\title{Климанов. Лекция 6}
+
+\begin{document}
+	\maketitle
+	\section{IP adress}
+	
+	% Please add the following required packages to your document preamble:
+	% \usepackage[table,xcdraw]{xcolor}
+	% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+	\begin{table}[h]
+		\resizebox{\textwidth}{!}{
+		\begin{tabular}{|l|l|l|l|l|l|}
+			\hline
+			\rowcolor[HTML]{C0C0C0} 
+			\multicolumn{2}{|l|}{\cellcolor[HTML]{C0C0C0}0}                                                                               & \multicolumn{2}{l|}{\cellcolor[HTML]{C0C0C0}1}                                                    & 2                      & 3                               \\ \hline
+			Version {[}4bit{]}               & IHL {[}4 bit{]} - сколько у нас опций (минимум 5)=\textgreater{}{[}20 bit{]}               & DSCP - приоритеты и сервис {[}5bit{]} & ECN - наличие или отсутствие перегрузок в сети {[}2bit{]} & \multicolumn{2}{l|}{Total Length}                        \\ \hline
+			\multicolumn{4}{|l|}{ID - Идентификатор, пакеты нумеруются. В IP используется НЕ для определения порядка доставки, а при фрагментации {[}16bit{]}}                                                                                & Flags {[}3 bit{]}      & Frment offset {[}13 bit{]}      \\ \hline
+			\multicolumn{2}{|l|}{TTL (Time to live) - сколько IP-переходов (через устройства 3 уровня) пакет будет существовать в сети).} & \multicolumn{2}{l|}{Protocol (что инкапсулированно внутри пакета)}                                & \multicolumn{2}{l|}{Header checksum (контрольная сумма)} \\ \hline
+			\multicolumn{6}{|l|}{IP Source}                                                                                                                                                                                                                                                              \\ \hline
+			\multicolumn{6}{|l|}{IP destination}                                                                                                                                                                                                                                                         \\ \hline
+			\multicolumn{6}{|l|}{Options (опционально)}                                                                                                                                                                                                                                                  \\ \hline
+		\end{tabular}}
+	\end{table}
+	
+	Type и Protocol позволяют правильно провести декапсуляцию.
+	
+	Fragment of set содержит смещение фрагмента в 8-байтных блоках.
+	
+	\subsection{MTU}
+	\emph{MTU} - maximum transfer unit
+	
+	\begin{figure}[h]
+		\includegraphics[width=0.8\linewidth]{6-1}
+	\end{figure}
+
+	В случае ситуации как на картинке, \texttt{Router 1} будет выполнять \underline{фрагментацию} - на пакеты в 1000 и 500 байт.
+	
+	\subsubsection{DF}
+	Флаг Dont Fragment - что пакет нельзя фрагментировать. Если размер больше MTU, пакет отбрасываются.
+	\subsubsection{MF}
+	More Fragments - флаг что за пакетом следуют еще пакеты, поднимаем его во всех кроме последнего. У последнего More Fragment=0. Нужно что бы маршрутизатор приступил к сборке.
+	
+	\textit{Сборка пакетов происходит только на конечном узле}
+	\newpage
+	\section{Routing}
+	IP - адреса делятся на \underline{сетевую} и \underline{хвостовую} части.
+	
+	Число ip-адресов, которые можно разместить в хвостовой части - $ 2^n-2 $, где $ n $ - число бит в хвостовой части, $ 2 $ - 2 зарезервированных адреса.
+	
+	\textit{В более сложной сети (например как на картинке число адресов != числу узлов)}
+	
+	\begin{figure}[h]
+		\includegraphics[width=0.5\linewidth]{6-2}
+	\end{figure}
+	
+	Пример:
+	
+	\begin{figure}[h]
+		\includegraphics[width=0.8\linewidth]{6-3}
+	\end{figure}
+
+	Таблица маршрутизации R2
+	
+	\texttt{subnet: 192.168.2.0/24 -> next-hop: 192.168.0.2}
+	
+	\texttt{subnet: 192.168.3.0/24 -> next-hop: 192.168.0.3}
+\end{document}
