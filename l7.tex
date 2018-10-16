@@ -1,0 +1,147 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{tikz}
+\usepackage [utf8x] {inputenc}
+\usepackage [T2A] {fontenc} 
+\usepackage[russian]{babel}
+\usepackage{cmap} 
+\usepackage{ gensymb }
+% Так ссылки в PDF будут активны
+\usepackage[unicode]{hyperref}
+\usepackage{ textcomp }
+\usepackage{indentfirst}
+\usepackage{adjustbox}
+\usepackage[version=3]{mhchem}
+
+% вы сможете вставлять картинки командой \includegraphics[width=0.7\textwidth]{ИМЯ ФАЙЛА}
+% получается подключать, как минимум, файлы .pdf, .jpg, .png.
+\usepackage{graphicx}
+% Если вы хотите явно указать поля:
+\usepackage[margin=1in]{geometry}
+% Или если вы хотите задать поля менее явно (чем больше DIV, тем больше места под текст):
+\usepackage[DIV=20]{typearea}
+
+\usepackage{fancyhdr}
+
+\newcommand{\bbR}{\mathbb R}%теперь вместо длинной команды \mathbb R (множество вещественных чисел) можно писать короткую запись \bbR. Вместо \bbR вы можете вписать любую строчку букв, которая начинается с '\'.
+\newcommand{\eps}{\varepsilon}
+\newcommand{\bbN}{\mathbb N}
+\newcommand{\dif}{\mathrm{d}}
+
+\newtheorem{Def}{Определение}
+\title{Климанов. Лекция 7}
+
+\begin{document}
+	\maketitle
+	\section{Маршрутизация}
+	Таблица маршрутизации имеет вид:
+	
+	\begin{table}[h]
+		\begin{tabular}{llll}
+			Source & Subnet      & mask        & next\_hop \\
+			S      & 192.168.0.0 & 255.255.0.0 & 10.1.1.1  \\
+			C      &             &             & Fa0/0    
+		\end{tabular}
+	\end{table}
+
+	Записи, который появляются в таблице автоматически помечаются отдельно (в оборудовании Cisco буквой C), а в \emph{next-hop} появляется название интерфейса.
+	
+	Также есть записи, заносимые в таблицу вручную [S]
+	
+	Также есть динамические записи (буква в зависимости от протокола)
+	
+	\subsection{Маршрутизирующие протоколы}
+	
+	Благодаря маршрутизирующим протоколам появляются записи в таблице маршрутизации
+	
+	\subsubsection{Внутренние}
+	\texttt{IGP, RIP, OSPF, EIGRP, IS-IS}
+	\subsubsection{Внешние}
+	\texttt{EGP, BGP}
+	\\
+	
+	\textbf{В} случае наличия двух записей в таблице маршрутизации для одного адреса берется запись с \underline{более длинной маской} (для меньшего числа узлов, более конкретная)
+	
+	В случае наличия двух записей от разных источников с одинаковым адресом, применяется переменная \texttt{AD} - Administrative Distance (\textit{степень доверия источнику информации, меньше - больше доверия})
+	
+	\subsubsection{Administrative Distance}
+	
+	Static - 1
+	
+	Connected - 0
+	
+	RIP -120
+	
+	OSPF - 110
+	
+	Свои значения Administrative distance могут быть заданы системным администратором
+	
+	Таблица маршрутизации составляется в результате работы маршрутизирующих протоколов до прихода пользовательских данных.
+	
+	\subsection{Широковещание}
+	
+	Существует два вида широковещания: \emph{общее} и \emph{направленное}.
+	
+	\textbf{Общее} широковещание роутер не маршрутизирует.
+	
+	\textbf{Направленное} широковещание в принципе является широковещанием только в сети назначения (пакет \texttt{10.1.1.255} идет до роутера \texttt{10.1.1.1/24} как обычный, а уже там может стать широковещательным)
+	\newpage
+	\section{Протокол ARP}
+	\textbf{ARP} - \emph{adress resolution protocol} позволяет по IP адресу узнать MAC-адрес.
+	
+	% Please add the following required packages to your document preamble:
+	% \usepackage{multirow}
+	\begin{table}[h]
+		\begin{tabular}{ccl}
+			byte-\textgreater{} & 0                                   & \multicolumn{1}{c}{1}                 \\
+			1                   & \multicolumn{2}{c}{{[}HType{]} Hardware type (какая среда используется)}    \\
+			2                   & \multicolumn{2}{c}{{[}PTYPE{]} Protocol type (какой протокол используется)} \\
+			3                   & HLEN -длина HTYPE                   & PLEN - длина PTYPE                    \\
+			4                   & \multicolumn{2}{c}{OPER - operation}                                        \\
+			5                   & \multicolumn{2}{c}{\multirow{3}{*}{Sha Sender hardware address}}            \\
+			6                   & \multicolumn{2}{c}{}                                                        \\
+			7                   & \multicolumn{2}{c}{}                                                        \\
+			8                   & \multicolumn{2}{c}{\multirow{2}{*}{SPA Sender protocol address}}            \\
+			9                   & \multicolumn{2}{c}{}                                                        \\
+			10,11,12            & \multicolumn{2}{c}{Tha {[}x3{]} Target hardware address}                    \\
+			13,14,15            & \multicolumn{2}{c}{TPA {[}x2{]} Target protocol address}                   
+		\end{tabular}
+	\caption{Вид ARP-запроса}
+	\end{table}
+
+	Весть траффик, который адрес не знает, куда отправить, он отправляет на Default-gateway. Если узел хоть что-то "знает" (он может проанализировать IP-адрес и маску), то он знает адрес сети, к которой подключен
+	
+	\section{Процесс установления соединения}
+	\begin{figure}[h]
+		\includegraphics[width=0.7\linewidth]{7-1}
+	\end{figure}
+	
+	1. Берутся адреса и маски своя и получателя, они сопоставляются, сверяются адреса сети.
+	
+	Если адреса сети совпадают:
+	
+	2. Формируется ARP-запрос, отправляется всем узлам сети ARP-запрос
+	
+	3. Все узлы кроме нужного игнорируют, нужный отправляет ответный ARP-запрос
+	
+	4. После этого узлы готовы к обмену данными
+	
+	Если адреса подсетей \underline{не совпадают}:
+	2. Отправитель обращается к узлу по умолчанию (который на картинке должен указывать на Router0 (или провайдеру))
+	
+	3. Отправляется ARP-запрос на адрес роутера, в ответ получаем MAC-адрес интерфейса роутера Router0, к которому подключена подсеть
+	
+	4. Отправляется пакет \underline{с адресом отправителя - MAC PC0, MAC адрес получателя - адрес роутера получателя Router1}.
+	
+	5. Router1 видит, что IP - адрес отправителя не совпадает с его адресом, он пересылает его дальше на hext\_hop.
+	
+	6. Формирует ARP-запрос, узнает MAC-адрес \texttt{10.0.2.0/24}. Отправляет.
+	
+	7. \texttt{10.0.2.0/24} понимает, что пакет все-таки тоже не ему, он аналогично ARP-запросом узнает адрес PC3
+	
+	\textit{В случае если на узле IP-адрес задан статически, при включении проверяется занятость IP-адреса (формируется ARP-запрос с адресом назначения в виде его собственного IP-адреса). Если он получает ответ, выдается ошибка duplicate IP adress и адрес не используется.}
+	
+	\textit{При выполнении этого самого изначального ARP-запроса заодно обучаются все коммутаторы в сети}.
+\end{document}
