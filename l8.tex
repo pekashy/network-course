@@ -1,0 +1,101 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{tikz}
+\usepackage [utf8x] {inputenc}
+\usepackage [T2A] {fontenc} 
+\usepackage[russian]{babel}
+\usepackage{cmap} 
+\usepackage{ gensymb }
+% Так ссылки в PDF будут активны
+\usepackage[unicode]{hyperref}
+\usepackage{ textcomp }
+\usepackage{indentfirst}
+\usepackage{adjustbox}
+\usepackage[version=3]{mhchem}
+\usepackage{MnSymbol,wasysym}
+
+% вы сможете вставлять картинки командой \includegraphics[width=0.7\textwidth]{ИМЯ ФАЙЛА}
+% получается подключать, как минимум, файлы .pdf, .jpg, .png.
+\usepackage{graphicx}
+% Если вы хотите явно указать поля:
+\usepackage[margin=1in]{geometry}
+% Или если вы хотите задать поля менее явно (чем больше DIV, тем больше места под текст):
+\usepackage[DIV=20]{typearea}
+
+\usepackage{fancyhdr}
+
+\newcommand{\bbR}{\mathbb R}%теперь вместо длинной команды \mathbb R (множество вещественных чисел) можно писать короткую запись \bbR. Вместо \bbR вы можете вписать любую строчку букв, которая начинается с '\'.
+\newcommand{\eps}{\varepsilon}
+\newcommand{\bbN}{\mathbb N}
+\newcommand{\dif}{\mathrm{d}}
+
+\newtheorem{Def}{Определение}
+\title{Климанов. Лекция 8}
+
+\begin{document}
+	\maketitle
+	\section{TCP}
+	\underline{Transmission Control Protocol}
+	
+	\subsection{Порт}
+	У каждого процесса есть возможность запросить у операционной системы открытие порта для протокола. Система открывает порт и привязывает его к конкретному приложению. Одно приложение может иметь несколько портов, один порт может быть привязан только к одному приложению
+	
+	\subsection{Сокет}
+	\textbf{Socket} - связка \texttt{IP+port}. Поэтому говорят что в сети происходит пересылка данных между двумя сокетами.
+	
+	Если IP позволяет идентифицировать узел глобально, сокет позволяет идентифицировать процесс глобально. 
+	
+	\textbf{Блок данных - сегмент}
+	\subsection{Структура пакета}
+	
+	\begin{table}[h]
+		\begin{tabular}{|c|l|clll|c|l|l|c|l|l|l|l|l|}
+			\hline
+			\multicolumn{8}{|c|}{Source port{[}16 bit{]}}                                                                     & \multicolumn{7}{c|}{Dest port 16 bit{]}}                    \\ \hline
+			\multicolumn{15}{|c|}{Sequence Number {[}16 bit{]}}                                                                                                                             \\ \hline
+			\multicolumn{15}{|c|}{AN - номер подверждения {[}32 bit{]}}                                                                                                                     \\ \hline
+			\multicolumn{2}{|c|}{Header L. {[}4 bit{]}} & \multicolumn{4}{c}{Reserved {[}5 bit{]}} & \multicolumn{3}{c|}{Falgs {[}5 bit{]}} & \multicolumn{6}{c|}{Window size {[}16 bit{]}} \\ \hline
+			\multicolumn{6}{|c|}{Checksum {[}16 bit{]}}                                            & \multicolumn{9}{c|}{Urgent pointer - указатель важности {[}16 bit{]}}                  \\ \hline
+			\multicolumn{15}{|c|}{Options {[}32 bit{]}}                                                                                                                                     \\ \hline
+			\multicolumn{15}{|c|}{Data {[}32 bit{]}}                                                                                                                                        \\ \hline
+		\end{tabular}
+	\end{table}
+	
+	
+	\textbf{Source port, dest port} (По 16 бит) - адреса отправителя и получателя.
+	
+	\textbf{Header L.} - 4 - bit длина заголовка
+	
+	Не требуется поле типа протокола, система знает из порта
+	
+	\textbf{Sequence number} - поле, которое отвечает за нумерацию \underline{байт}. Монотонно растет, после достижения максимального значения сбрасывается. 
+	
+	\textbf{ACK Number} - отвечает за подтверждения данных. В поле заносится номер байта, до которого он может подтвердить получение данных. При потере любого сегмента, данные после него подтверждены не будут. Или \underline{первый ожидаемый байт}.
+ 	
+ 	\textit{	При установлении соединения стороны сообщают друг другу свое Sequence Number, что бы на основе этого выстраивать Ack Number}
+	\subsection{Флаги}
+	
+	\textbf{URG, ACK, PSH, RST, SYN, FIN}.
+	
+	\textit{Дописать что значат не успел - ноутбук разрядился} \smiley{} 
+	
+	\subsubsection{Установление соединения}
+	
+	\textbf{SYN} используется для установления соединения
+	
+	\textbf{RST} вообще аварийный, но тоже используется длязакрытия
+	
+	\begin{enumerate}
+		\item B открывает порт и ждет соединения (\textbf{таким образом B - сервер}), A тоже открывает порт и отправляет B сегмент с флагом \texttt{SYN}. 
+		\item B отправляет A пакет с флагасми \texttt{SYN} и \texttt{ACK}
+		\item A отправляет пакет с флагом \texttt{ACK}
+	\end{enumerate}
+
+	\subsubsection{Метод скользящего окна}
+	
+	Берем фиксированное окно. Отправляем все данные из него одновременно. Смещаем окно до последнего подтвержденного байта (первого неподтвержденного). Отправляем все данные из окна.
+	
+	В поле \textbf{Window size} задаем то, сколько байт мы ждем.
+\end{document}
