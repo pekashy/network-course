@@ -1,0 +1,95 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{tikz}
+\usepackage [utf8x] {inputenc}
+\usepackage [T2A] {fontenc} 
+\usepackage[russian]{babel}
+\usepackage{cmap} 
+\usepackage{ gensymb }
+% Так ссылки в PDF будут активны
+\usepackage[unicode]{hyperref}
+\usepackage{ textcomp }
+\usepackage{indentfirst}
+\usepackage{adjustbox}
+\usepackage[version=3]{mhchem}
+\usepackage{MnSymbol,wasysym}
+
+% вы сможете вставлять картинки командой \includegraphics[width=0.7\textwidth]{ИМЯ ФАЙЛА}
+% получается подключать, как минимум, файлы .pdf, .jpg, .png.
+\usepackage{graphicx}
+% Если вы хотите явно указать поля:
+\usepackage[margin=1in]{geometry}
+% Или если вы хотите задать поля менее явно (чем больше DIV, тем больше места под текст):
+\usepackage[DIV=20]{typearea}
+
+\usepackage{fancyhdr}
+
+\newcommand{\bbR}{\mathbb R}%теперь вместо длинной команды \mathbb R (множество вещественных чисел) можно писать короткую запись \bbR. Вместо \bbR вы можете вписать любую строчку букв, которая начинается с '\'.
+\newcommand{\eps}{\varepsilon}
+\newcommand{\bbN}{\mathbb N}
+\newcommand{\dif}{\mathrm{d}}
+
+\newtheorem{Def}{Определение}
+\title{Климанов. Лекция 9}
+
+\begin{document}
+	\maketitle
+	
+	...(современный TCP)...
+	
+	\section{Оптимизации TCP}
+	\paragraph{Алгоритм Нейгла} Если на высоких уровнях есть протокол, который оперирует небольшими порциями данных (нельзя сформировать сегмент сразу), TCP может собирать их, а потом отправить под одних заголовком
+	
+	\paragraph{Delayed ACK} Подтверждение отправляется внагрузку к данным, которые нужно отправить, это позволяет не отправлять пустые сегменты и снизить нагрузку на сеть
+	
+	\section{UDP}
+	
+	Заголовок:
+	
+	\begin{table}[h]
+		\begin{tabular}{|l|l|}
+			\hline
+			Source Port & Dest Port \\ \hline
+			Length      & Check Sum \\ \hline
+		\end{tabular}
+	\end{table}
+
+	\textit{При открытии порта делается запрос в систему, указывается тип протокола, система открывает порт и передает данные приложению}
+	
+	\paragraph{TFTP} - протокол, сделанный на основе UDP, в котором реализованы средства, гарантирующие доставку (но ограничений сильно больше, чем в TCP).
+	
+	\section{ICMP}
+	Протокол управляющихх сообщений для протокола IP.
+	
+	Заголовок [8 bytes]:
+	
+	\begin{table}[h]
+		\begin{tabular}{|l|l|l|l|}
+			\hline
+			Type {[}1 byte{]} & Code {[}1 byte{]} & \multicolumn{2}{l|}{Checksum {[}2 bytes{]}} \\ \hline
+		\end{tabular}
+	\end{table}
+
+	Используется для доставки сообщений об ошибках (нет маршрута, пакет слишком большой, TTL закончился (\texttt{TTL exceeded})).
+	
+	\section{VLAN}
+	VLAN - Virtual Local Area Network.
+	Порты в \emph{управляемых коммутаторах} можно объединять в группы, для каждой будет отдельная изолированная таблица коммутации.
+	
+	Принадлежность к VLAN'у определяется на основе принадлежности к физическому интерфейсу, либо на основе тегов.
+	
+	\paragraph{IEEE 802.1Q/P} - стандарт, документирующий тегирование для коммутаторов (Q - набор стандартов для маркировки, P набор стандартов для - качества обслуживания)
+	\paragraph{ISL} - цисковсский стандарт, документирующий тегирование (уст. тк был менее эффективен)
+	\paragraph{Trunk} - канал или интерфейс, через которые передаются данные нескольких VLAN-сетей.
+	
+	\subsection{IEEE 802.1Q/P}
+	Заголовок:
+\begin{table}[h]
+	\begin{tabular}{|l|l|l|l|}
+		\hline
+		\begin{tabular}[c]{@{}l@{}}IPID {[}16 bit{]} - какой протокол\\  используется для тегирования\end{tabular} & PCP {[}3 bit{]} - приоритет трафика & \begin{tabular}[c]{@{}l@{}}CFI {[}1 bit{]} - идентификатор\\  каноничности формата (Ethernet или нет\end{tabular} & \begin{tabular}[c]{@{}l@{}}VID {[}12 bit{]} - какому\\  VLAN принадлежит\end{tabular} \\ \hline
+	\end{tabular}
+\end{table}
+\end{document}
