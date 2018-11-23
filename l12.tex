@@ -1,0 +1,79 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{tikz}
+\usepackage [utf8x] {inputenc}
+\usepackage [T2A] {fontenc} 
+\usepackage[russian]{babel}
+\usepackage{cmap} 
+\usepackage{ gensymb }
+% Так ссылки в PDF будут активны
+\usepackage[unicode]{hyperref}
+\usepackage{ textcomp }
+\usepackage{indentfirst}
+\usepackage{adjustbox}
+\usepackage[version=3]{mhchem}
+\usepackage{MnSymbol,wasysym}
+
+% вы сможете вставлять картинки командой \includegraphics[width=0.7\textwidth]{ИМЯ ФАЙЛА}
+% получается подключать, как минимум, файлы .pdf, .jpg, .png.
+\usepackage{graphicx}
+% Если вы хотите явно указать поля:
+\usepackage[margin=1in]{geometry}
+% Или если вы хотите задать поля менее явно (чем больше DIV, тем больше места под текст):
+\usepackage[DIV=20]{typearea}
+
+\usepackage{fancyhdr}
+
+\newcommand{\bbR}{\mathbb R}%теперь вместо длинной команды \mathbb R (множество вещественных чисел) можно писать короткую запись \bbR. Вместо \bbR вы можете вписать любую строчку букв, которая начинается с '\'.
+\newcommand{\eps}{\varepsilon}
+\newcommand{\bbN}{\mathbb N}
+\newcommand{\dif}{\mathrm{d}}
+
+\newtheorem{Def}{Определение}
+\title{Климанов. Лекция 12}
+
+\begin{document}
+	\maketitle
+	\section{Spanning tree}
+	(...)
+	\section{Топологии} 
+	Access Layer (Коммутаторы)\\
+	|\\
+	V\\
+	Aggregation Layer (L3-коммутаторы, маршрутизаторы со свичами - зона, где L2 встречается с L3)\\
+	|\\
+	V\\
+	Core (задача - максимально быстрая переддача данных)
+	
+	(...)
+	\section{NAT/PAT}
+	Технологии трансляции, которые позволяют получить доступ к глобальной сети 
+	\subsection{NAT}
+	\paragraph{NAT} - \emph{Network Adress Translation}
+	
+	\begin{figure}[h]
+		\includegraphics[width=0.7\linewidth]{12-1}
+	\end{figure}
+	\textbf{NAT} позволяет транслировать адреса локальной сети в адреса глобальной, доступные провайдеру
+	
+	Допустим, мы хотим передать пакет от узла \textbf{A} к некоему серверу \textbf{B}, имеющему IP \texttt{8.8.8.8}.
+	\begin{enumerate}
+		\item IP=\texttt{192.168.0.2} - \textbf{inside local}
+		
+	\textbf{IP outside local }= \texttt{8.8.8.8} -\textbf{outside local}
+		\item IP =\texttt{1.1.1.2} - \textbf{inside global}
+		
+	 \textbf{IP outside local} = \texttt{8.8.8.8} -\textbf{outside global}
+	\end{enumerate}
+	Таблица трансляции обновляется динамически
+	
+	\subsection{PAC}
+	\paragraph{PAT} - \emph{Network Port Translation}
+	В \textbf{PAT}-трансляции задействован еще и транспортный уровень TCP:
+	
+	Таблица трансляции PAT: 
+	
+	$ IP_{il}+PORT_{il} <->IP_{ig}+Port_{ig} $
+\end{document}
