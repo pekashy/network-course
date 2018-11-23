@@ -1,0 +1,85 @@
+\part{\documentclass[a4paper,10pt]{article}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{tikz}
+\usepackage [utf8x] {inputenc}
+\usepackage [T2A] {fontenc} 
+\usepackage[russian]{babel}
+\usepackage{cmap} 
+\usepackage{ gensymb }
+% Так ссылки в PDF будут активны
+\usepackage[unicode]{hyperref}
+\usepackage{ textcomp }
+\usepackage{indentfirst}
+\usepackage{adjustbox}
+\usepackage[version=3]{mhchem}
+\usepackage{MnSymbol,wasysym}
+
+% вы сможете вставлять картинки командой \includegraphics[width=0.7\textwidth]{ИМЯ ФАЙЛА}
+% получается подключать, как минимум, файлы .pdf, .jpg, .png.
+\usepackage{graphicx}
+% Если вы хотите явно указать поля:
+\usepackage[margin=1in]{geometry}
+% Или если вы хотите задать поля менее явно (чем больше DIV, тем больше места под текст):
+\usepackage[DIV=20]{typearea}
+
+\usepackage{fancyhdr}
+
+\newcommand{\bbR}{\mathbb R}%теперь вместо длинной команды \mathbb R (множество вещественных чисел) можно писать короткую запись \bbR. Вместо \bbR вы можете вписать любую строчку букв, которая начинается с '\'.
+\newcommand{\eps}{\varepsilon}
+\newcommand{\bbN}{\mathbb N}
+\newcommand{\dif}{\mathrm{d}}
+
+\newtheorem{Def}{Определение}
+\title{Климанов. Лекция 10}
+
+\begin{document}
+	\maketitle}
+	\section{Динамическая маршрутизация}
+	\paragraph{Маршрутизирутизирующие протоколы} - участвующие в маршрутизации.
+	\paragraph{Маршрутизируемые протоколы} - очев.
+	
+	\subsection{Протокол RIP}
+	Работает через протокол \emph{UDP} через 520 порт, не устанавливает соседства (сессии)
+	\paragraph{Routing Information Protocol}
+	Существует 2 версии:
+	\paragraph{v1} - выполняет классовую маршрутизацию, без использования масок, более древний. Не используется в реальных сетях.
+	\paragraph{v2} - использует маски, более новый, но все еще наследует много свойств от \textbf{v1}. Все еще используется но не очень популярен в реальных сетях.
+	Также существует \textbf{RIPng} - для \emph{ipv6}
+	
+	\subsubsection{Метрики}
+	Функция, считающая тем или иным способом расстояние.
+	
+	Меньшее значение метрики означает лучшую достижимость узла.
+	
+	В RIPv2 используется в качестве метрики число \emph{L3-переходов (между роутерами)}
+	
+	Максимальное значение метрики в \emph{RIPv2} - \textbf{15}.
+	
+	\textbf{16} - означает недостижимый узел.
+	
+	\textit{К сожалению, такая метрика не учитывает важные параметры сети вроде пропускной способности, задержки, загруженности и тд.}
+	
+	\subsection{Таймеры}
+	\paragraph{UPDATE-timer} 30 секунд, частота рассылки \emph{RIP-database} всем узлам.
+	\paragraph{INVALID-timer} 180 секунд - время жизни маршрута
+	
+	\subsection{Оптимизации протокола}
+	В классическом RIP, тк UPDATE- таймеры продолжают отправляться пока не закончится invalid-таймер, в результате мы теряем по 3 минуты на каждом узле при распространении информации о недоступности сети. Что бы этого избежать, используется:
+	\paragraph{Root-posing} - при получении информации о недоступности сети, роутер отправляет в датабазу метрику для этого пути \textbf{16}, база соответственно рассылается всем при UPDATE.
+	
+	Из-за вероятности потери пакета, был введен еще один механизм -
+	\paragraph{Possibly down} - маршрут помечается как возможно недоступный уже при наступлении \textbf{Hold down}-таймера.
+	
+	\paragraph{Flush timer} (Cisco) - сколько времени должно пройти до удаления маршрута (default -240 сек.)
+	У CISCO
+	
+	\paragraph{Метод split horizon}, в UPDATE, отправляющийся в определенный порт не вкладывается информация о сети, от которой пришла информация, через этот порт. (надеюсь, понятно).
+	
+	(тут я немного заснул)...
+	
+	\subsection{Native VLAN}
+	В \emph{802.1P/Q} существует единственная сеть, траффик которой не теггируется
+	
+\end{document}
